@@ -1,0 +1,10 @@
+{
+    "name": "slimshadydubois/rockettcg",
+    "description": "Rocket TCG",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*"
+    }
+}
