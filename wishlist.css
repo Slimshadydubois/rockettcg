@@ -1,0 +1,40 @@
+/* Estilos para a Lista de Desejos (Wishlist) */
+
+.wishlist-header {
+    padding-bottom: 20px;
+}
+
+.wishlist-item {
+    position: relative;
+    padding-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.remove-wishlist-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--bg-color);
+    color: #ff0055;
+    border: none;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: 0.3s;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+.remove-wishlist-btn:hover {
+    transform: scale(1.1) rotate(90deg);
+}
+
+.add-to-cart-from-wishlist {
+    margin: 0 15px;
+    width: calc(100% - 30px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+}

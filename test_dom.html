@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <input type="checkbox" class="filter-cb" data-filter="rarity" value="Holografica" checked> Holográfica
+    <input type="range" id="priceRange" value="2000">
+    <div id="priceValue"></div>
+
+    <a href="#" class="card-item-link" data-price="0.35" data-rarity="Comum,Holografica" data-condition="NM" data-type="Pokémon">Card 1</a>
+
+    <button id="applyFilters">Filtrar</button>
+
+    <script>
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
+        const checkboxes = document.querySelectorAll('.filter-cb');
+        const cards = document.querySelectorAll('.card-item-link');
+
+        function filterCards() {
+            const maxPrice = parseFloat(priceRange.value);
+            
+            const activeFilters = {
+                rarity: [],
+                condition: [],
+                type: []
+            };
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    activeFilters[cb.dataset.filter].push(cb.value);
+                }
+            });
+
+            cards.forEach(card => {
+                const cardPrice = parseFloat(card.dataset.price);
+                const cardRarity = card.dataset.rarity;
+                const cardCondition = card.dataset.condition;
+                const cardType = card.dataset.type;
+
+                let show = true;
+
+                if (cardPrice > maxPrice) show = false;
+
+                const cardRarities = (cardRarity || '').split(',');
+                if (activeFilters.rarity.length > 0 && !activeFilters.rarity.some(r => cardRarities.includes(r))) show = false;
+                
+                if (activeFilters.condition.length > 0 && !activeFilters.condition.includes(cardCondition)) show = false;
+                
+                if (activeFilters.type.length > 0 && !activeFilters.type.includes(cardType)) show = false;
+
+                console.log("Card show:", show);
+            });
+        }
+        
+        filterCards();
+    </script>
+</body>
+</html>

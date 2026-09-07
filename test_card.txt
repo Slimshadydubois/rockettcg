@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tandemaus - RocketTCG</title>
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="card.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <a href="index.php" class="logo" style="text-decoration: none;">
+            <img src="assets/Rocket_foto_de_perfil_png.png" alt="RocketTCG" style="height: 50px; width: auto; object-fit: contain;">
+        </a>
+        
+        <nav class="nav-links">
+            <a href="category.php?cat=pokemon">Pokémon</a>
+            <a href="category.php?cat=magic">Magic</a>
+            <a href="category.php?cat=yugioh">Yu-Gi-Oh!</a>
+            <a href="category.php?cat=onepiece">One Piece</a>
+        </nav>
+        
+        <div class="nav-actions">
+            <a href="search.php" class="icon-btn"><ion-icon name="search-outline"></ion-icon></a>
+            <a href="wishlist.php" class="icon-btn"><ion-icon name="heart-outline"></ion-icon></a>
+            <a href="cart.php" class="icon-btn" style="position:relative;">
+                <ion-icon name="cart-outline"></ion-icon>
+                <span class="cart-badge" style="position:absolute; top:-5px; right:-5px; background:#ff0055; color:white; font-size:0.7rem; padding:2px 6px; border-radius:50%; font-weight:bold; display: none; align-items:center; justify-content:center;">0</span>
+            </a>
+                            <a href="login.php" class="login-link"><ion-icon name="person-circle-outline"></ion-icon> Login</a>
+                    </div>
+    </header>
+
+    <main class="card-details-container">
+        
+        <div class="breadcrumb">
+            <a href="index.php">Início</a> > <a href="category.php?cat=pokemon">Pokemon</a> > <span>Tandemaus</span>
+        </div>
+
+        <div class="card-content-wrapper">
+            <!-- Coluna Esquerda: Imagem -->
+            <div class="card-image-large">
+                <img src="https://repositorio.sbrauble.com/arquivos/in/pokemon_bkp/cd/639/67350df33a91a-x631w-ug7w3-82ffda375fa28fa9a70a0bb6b0e2b3d6.jpg" alt="Tandemaus">
+            </div>
+
+            <!-- Coluna Direita: Detalhes -->
+            <div class="card-info-large">
+                <h1>Tandemaus</h1>
+                                <h2 class="card-price" id="display-price">
+                                        <span id="display-final-price">R$ 0,15</span>
+                </h2>
+
+                                <form action="cart_action.php" method="POST" style="display:inline-block; width:100%; margin-bottom:10px;">
+                    <input type="hidden" name="action" id="cart-action-input" value="add_cart">
+                    <input type="hidden" name="id" value="260">
+                    
+                                        <input type="hidden" name="variante" value="normal">
+                    
+                    <button type="submit" id="cart-submit-btn" class="btn primary-btn add-to-cart-large" style="width:100%;"><ion-icon name="cart"></ion-icon> Adicionar ao Carrinho</button>
+                </form>
+
+                <form action="cart_action.php" method="POST" style="display:inline-block; width:100%; margin-bottom:20px;">
+                                        <input type="hidden" name="action" value="add_wishlist">
+                    <input type="hidden" name="id" value="260">
+                    <input type="hidden" name="return_url" value="card.php?id=260">
+                    <button type="submit" class="btn ghost-btn wishlist-btn" style="width:100%;"><ion-icon name="heart-outline"></ion-icon> Lista de Desejos</button>
+                </form>
+
+                <div class="technical-specs">
+                    <h3>Especificações da Carta</h3>
+                    <table>
+                        <tr>
+                            <th>Edição</th>
+                            <td>fagulhas impetuosas 2024</td>
+                        </tr>
+                        <tr>
+                            <th>Estado da Carta</th>
+                            <td>Near Mint</td>
+                        </tr>
+                        <tr>
+                            <th>Raridade</th>
+                            <td>Comum</td>
+                        </tr>
+                        <tr>
+                            <th>Data de Lançamento</th>
+                            <td>01/01/1970</td>
+                        </tr>
+                        <tr>
+                            <th>Jogo</th>
+                            <td>Pokémon</td>
+                        </tr>
+                        <tr>
+                            <th>Tipo de Carta</th>
+                            <td id="spec-tipo-carta">Normal</td>
+                        </tr>
+                        <tr>
+                            <th>Nacionalidade</th>
+                            <td>PT-BR</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="description-section">
+                    <h3>Descrição</h3>
+                    <p>Número da Carta: 157/191</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+        <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>Atendimento</h3>
+                <ul>
+                    <li><a href="contato.php">Fale Conosco</a></li>
+                    <li><a href="#">Perguntas Frequentes</a></li>
+                    <li><a href="#">Busca Avan�ada</a></li>
+                    <li><a href="#">Navegue pelo Site</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contato</h3>
+                <ul class="contact-info">
+                    <li><ion-icon name="location-outline"></ion-icon> <span>Endere�o Gen�rico, 000 - Bairro<br> (Loja Exemplo)<br> Cidade/UF</span></li>
+                    <li><ion-icon name="call-outline"></ion-icon> <span>(00) 0000-0000</span></li>
+                    <li><ion-icon name="logo-whatsapp"></ion-icon> <span>(00) 00000-0000</span></li>
+                    <li><ion-icon name="mail-outline"></ion-icon> <span>email@generico.com.br</span></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Funcionamento</h3>
+                <ul class="contact-info">
+                    <li><ion-icon name="time-outline"></ion-icon> <span>Segunda a Sexta: 09:00 - 20:00</span></li>
+                    <li><ion-icon name="calendar-outline"></ion-icon> <span>S�bado: 09:00 - 20:00</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 RocketTCG. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="ajax_actions.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,200 @@
+.contato-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.contato-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.contato-header h1 {
+    font-size: 3rem;
+    color: var(--text-main);
+    margin-bottom: 15px;
+}
+
+.contato-header h1 span {
+    color: var(--primary-color);
+}
+
+.contato-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.contato-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* Formulário */
+.contato-form-area {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid var(--glass-border);
+}
+
+.contato-form .form-group {
+    margin-bottom: 20px;
+}
+
+.contato-form .form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.contato-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.contato-form input,
+.contato-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    font-size: 1rem;
+    background: #fafafa;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.contato-form input:focus,
+.contato-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+    background: #fff;
+}
+
+.submit-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 10px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    background: var(--primary-color);
+    color: white;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    background: var(--primary-hover);
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 15px;
+    border-radius: 0;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    border: 1px solid #c8e6c9;
+}
+
+.alert-success ion-icon {
+    font-size: 1.5rem;
+}
+
+/* Info de Contato */
+.contato-info-area {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.info-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+.info-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.whatsapp-card .info-icon {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+}
+
+.email-card .info-icon {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+}
+
+.info-text h3 {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.info-text p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+}
+
+.info-value {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .contato-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .contato-form .form-group-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    
+    .contato-header h1 {
+        font-size: 2.2rem;
+    }
+}
