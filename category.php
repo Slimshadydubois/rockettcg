@@ -21,11 +21,11 @@ $cartas = $stmt->fetchAll();
     <?php
     $dynamic_css = "";
     if($categoriaAtiva == 'pokemon') {
-        $dynamic_css = "--primary-color: #e3350d; --primary-hover: #b32a0a; --accent-color: #000000;";
+        $dynamic_css = "--primary-color: #e3350d; --primary-hover: #b32a0a; --accent-color: #ffcb05;";
     } elseif($categoriaAtiva == 'yugioh') {
         $dynamic_css = "--primary-color: #4b0082; --primary-hover: #000080; --accent-color: #ffd700;";
     } elseif($categoriaAtiva == 'magic') {
-        $dynamic_css = "--primary-color: #5c4033; --primary-hover: #3d2b22; --accent-color: #d4af37; --bg-color: #fdf6e3;";
+        $dynamic_css = "--primary-color: #5c4033; --primary-hover: #3d2b22; --accent-color: #d4af37;";
     } elseif($categoriaAtiva == 'onepiece') {
         $dynamic_css = "--primary-color: #006994; --primary-hover: #004c6d; --accent-color: #e4d96f;";
     }
