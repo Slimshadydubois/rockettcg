@@ -50,7 +50,7 @@ $cartas = $stmt->fetchAll();
         </nav>
         
         <div class="nav-actions">
-            <a href="eventos.php" class="login-link" style="color: var(--accent-color); border-color: var(--accent-color); margin-right: 10px;"><ion-icon name="calendar-outline"></ion-icon> Eventos</a>
+            <a href="eventos.php" class="icon-btn" title="Eventos"><ion-icon name="calendar-outline"></ion-icon></a>
             <a href="search.php" class="icon-btn"><ion-icon name="search-outline"></ion-icon></a>
             <a href="wishlist.php" class="icon-btn"><ion-icon name="heart-outline"></ion-icon></a>
             <a href="cart.php" class="icon-btn" style="position:relative;">

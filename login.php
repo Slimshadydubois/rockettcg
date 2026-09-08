@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
         
         // Emails dos donos do site que terão permissão de administrador
-        $emails_admin = ['admin@rockettcg.com', 'dono@rockettcg.com'];
+        $emails_admin = ['pedro.brum69@gmail.com', 'gabrielfarias210@gmail.com', 'henriquecamposduarte21@gmail.com'];
         $tipo = in_array($email, $emails_admin) ? 'admin' : 'cliente';
 
         try {
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user && password_verify($senha, $user['senha'])) {
             // Garante privilégio de admin no login caso o email do usuário seja de um dono
-            $emails_admin = ['admin@rockettcg.com', 'dono@rockettcg.com'];
+            $emails_admin = ['pedro.brum69@gmail.com', 'gabrielfarias210@gmail.com', 'henriquecamposduarte21@gmail.com'];
             $tipo = in_array($email, $emails_admin) ? 'admin' : $user['tipo'];
             
             if ($tipo === 'admin' && $user['tipo'] !== 'admin') {

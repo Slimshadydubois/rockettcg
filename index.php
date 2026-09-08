@@ -52,8 +52,8 @@ if (isset($_SESSION['usuario_id'])) {
             </div>
             
             <div class="nav-actions">
-                <a href="eventos.php" class="login-link" style="color: var(--accent-color); border-color: var(--accent-color); margin-right: 10px;"><ion-icon name="calendar-outline"></ion-icon> Eventos</a>
-                <a href="wishlist.php" class="icon-btn"><ion-icon name="heart-outline"></ion-icon></a>
+                <a href="eventos.php" class="icon-btn" title="Eventos"><ion-icon name="calendar-outline"></ion-icon></a>
+                <a href="wishlist.php" class="icon-btn" title="Favoritos"><ion-icon name="heart-outline"></ion-icon></a>
                 <a href="cart.php" class="icon-btn" style="position:relative;">
                     <ion-icon name="cart-outline"></ion-icon>
                     <span class="cart-badge" style="position:absolute; top:-5px; right:-5px; background:#ff0055; color:white; font-size:0.7rem; padding:2px 6px; border-radius:50%; font-weight:bold; display: <?php echo $total_cart_items > 0 ? 'flex' : 'none'; ?>; align-items:center; justify-content:center;"><?php echo $total_cart_items; ?></span>
