@@ -59,7 +59,7 @@ if (isset($_SESSION['usuario_id'])) {
         </a>
         <nav class="nav-links">
             <a href="index.php"><ion-icon name="home-outline"></ion-icon> Início</a>
-            <a href="eventos.php" style="color: var(--accent-color);"><ion-icon name="calendar-outline"></ion-icon> Eventos</a>
+
         </nav>
         <div class="nav-actions">
             <?php if(isset($_SESSION['usuario_id'])): ?>

@@ -18,12 +18,41 @@ $user = $stmtU->fetch();
 $mensagem_sucesso = false;
 $erro_pagamento = false;
 
+$is_gravatai_success = false;
 // Tratar retorno do Mercado Pago
 if (isset($_GET['status'])) {
-    if ($_GET['status'] === 'success') {
-        // Limpar o carrinho (simulando compra com sucesso)
-        $stmtLimpar = $pdo->prepare("DELETE FROM carrinho_itens WHERE usuario_id = ?");
-        $stmtLimpar->execute([$user_id]);
+    if ($_GET['status'] === 'success' || $_GET['status'] === 'success_gravatai') {
+        $tipo_entrega_final = (isset($_GET['entrega']) && $_GET['entrega'] === 'gravatai') || $_GET['status'] === 'success_gravatai' ? 'gravatai' : (isset($_GET['entrega']) ? $_GET['entrega'] : 'entrega');
+        $is_gravatai_success = ($tipo_entrega_final === 'gravatai');
+        $frete_final = isset($_GET['frete']) ? (float)$_GET['frete'] : (($tipo_entrega_final === 'entrega') ? 20 : 0);
+        
+        $stmtCart = $pdo->prepare("SELECT ci.carta_id, ci.quantidade, c.preco FROM carrinho_itens ci JOIN cartas c ON ci.carta_id = c.id WHERE ci.usuario_id = ?");
+        $stmtCart->execute([$user_id]);
+        $itens = $stmtCart->fetchAll();
+        
+        if (count($itens) > 0) {
+            $total_pedido = $frete_final;
+            foreach ($itens as $item) {
+                $total_pedido += $item['quantidade'] * $item['preco'];
+            }
+            
+            $stmtPedido = $pdo->prepare("INSERT INTO pedidos (usuario_id, total, frete, tipo_entrega, status) VALUES (?, ?, ?, ?, 'Em preparação')");
+            $stmtPedido->execute([$user_id, $total_pedido, $frete_final, $tipo_entrega_final]);
+            $pedido_id = $pdo->lastInsertId();
+            
+            $stmtItem = $pdo->prepare("INSERT INTO pedidos_itens (pedido_id, carta_id, quantidade, preco_unitario) VALUES (?, ?, ?, ?)");
+            foreach ($itens as $item) {
+                $stmtItem->execute([$pedido_id, $item['carta_id'], $item['quantidade'], $item['preco']]);
+            }
+            
+            // Limpar o carrinho
+            $stmtLimpar = $pdo->prepare("DELETE FROM carrinho_itens WHERE usuario_id = ?");
+            $stmtLimpar->execute([$user_id]);
+            
+            // Enviar email de novo pedido
+            require_once 'email_helper.php';
+            enviar_email_pedido($pdo, $pedido_id, 'novo_pedido');
+        }
         
         $mensagem_sucesso = true;
     } else if ($_GET['status'] === 'failure') {
@@ -88,13 +117,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         "items" => $items_mp
     ];
     
-    // O Mercado Pago não aceita localhost em URLs de retorno automáticas.
+    $success_url = $base_url . "checkout.php?status=success";
+    if ($tipo_entrega === 'gravatai') {
+        $success_url .= "&entrega=gravatai";
+    } else if ($tipo_entrega === 'balcao') {
+        $success_url .= "&entrega=balcao";
+    } else {
+        $success_url .= "&entrega=entrega&frete=" . urlencode($valor_frete);
+    }
+    
+    $preference_data["back_urls"] = [
+        "success" => $success_url,
+        "failure" => $base_url . "checkout.php?status=failure",
+        "pending" => $base_url . "checkout.php?status=pending"
+    ];
+    
     if (!in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1'])) {
-        $preference_data["back_urls"] = [
-            "success" => $base_url . "checkout.php?status=success",
-            "failure" => $base_url . "checkout.php?status=failure",
-            "pending" => $base_url . "checkout.php?status=pending"
-        ];
         $preference_data["auto_return"] = "approved";
     }
 
@@ -176,9 +214,18 @@ if ($subtotal == 0 && !$mensagem_sucesso) {
         <?php if($mensagem_sucesso): ?>
             <div style="text-align: center; padding: 50px 0;">
                 <ion-icon name="checkmark-circle" style="font-size: 5rem; color: #4caf50;"></ion-icon>
-                <h1 style="color: #4caf50;">Compra Finalizada com Sucesso!</h1>
-                <p>Obrigado por comprar na RocketTCG. Seu pedido foi pago e está sendo processado.</p>
-                <a href="index.php" class="btn primary-btn" style="margin-top:20px; display:inline-block; text-decoration:none;">Voltar para a Loja</a>
+                <h1 style="color: #4caf50;">Pedido Realizado com Sucesso!</h1>
+                <?php if($is_gravatai_success): ?>
+                    <p>Você escolheu a opção de envio por Uber Flash / 99 Entrega (Gravataí).</p>
+                    <p>O seu pagamento dos produtos foi aprovado! Agora, por favor, nos chame no WhatsApp para combinarmos o valor do frete e os detalhes do envio.</p>
+                    <a href="https://wa.link/stslbm" target="_blank" class="btn primary-btn" style="margin-top:20px; display:inline-block; text-decoration:none; background-color: #25D366; border-color: #25D366; color: white;">
+                        <ion-icon name="logo-whatsapp" style="vertical-align: middle;"></ion-icon> Enviar Mensagem
+                    </a>
+                <?php else: ?>
+                    <p>Obrigado por comprar na RocketTCG. Seu pedido foi pago e está sendo processado.</p>
+                <?php endif; ?>
+                <br>
+                <a href="index.php" class="btn ghost-btn" style="margin-top:15px; display:inline-block; text-decoration:none;">Voltar para a Loja</a>
             </div>
         <?php else: ?>
         
@@ -193,9 +240,15 @@ if ($subtotal == 0 && !$mensagem_sucesso) {
         
         <div class="summary-box">
             <h3>Resumo da Compra</h3>
-            <p><strong>Tipo de Entrega:</strong> <?php echo $tipo_entrega === 'balcao' ? 'Retirar no Balcão' : 'Entrega no Endereço'; ?></p>
+            <p><strong>Tipo de Entrega:</strong> 
+                <?php 
+                    if($tipo_entrega === 'balcao') echo 'Retirar no Balcão'; 
+                    else if($tipo_entrega === 'gravatai') echo 'Gravataí - Envio por Uber/99';
+                    else echo 'Entrega no Endereço'; 
+                ?>
+            </p>
             <p><strong>Subtotal:</strong> R$ <?php echo number_format($subtotal, 2, ',', '.'); ?></p>
-            <p><strong>Frete:</strong> R$ <?php echo number_format($valor_frete, 2, ',', '.'); ?></p>
+            <p><strong>Frete:</strong> <?php echo $tipo_entrega === 'gravatai' ? 'A Combinar' : 'R$ ' . number_format($valor_frete, 2, ',', '.'); ?></p>
             <h3 style="margin-top:10px; color:var(--accent-color);">Total a Pagar: R$ <?php echo number_format($total, 2, ',', '.'); ?></h3>
         </div>
 
@@ -210,31 +263,31 @@ if ($subtotal == 0 && !$mensagem_sucesso) {
             <div class="row">
                 <div class="form-group col">
                     <label>CEP</label>
-                    <input type="text" name="cep" value="<?php echo htmlspecialchars($user['cep'] ?? ''); ?>" required>
+                    <input type="text" name="cep" id="cep_input" value="<?php echo htmlspecialchars($user['cep'] ?? ''); ?>" required>
                 </div>
                 <div class="form-group col">
                     <label>Estado</label>
-                    <input type="text" name="estado" value="<?php echo htmlspecialchars($user['estado'] ?? 'RS'); ?>" required>
+                    <input type="text" name="estado" id="estado_input" value="<?php echo htmlspecialchars($user['estado'] ?? 'RS'); ?>" required>
                 </div>
                 <div class="form-group col">
                     <label>Cidade</label>
-                    <input type="text" name="cidade" value="<?php echo htmlspecialchars($user['cidade'] ?? 'Cachoeirinha'); ?>" required>
+                    <input type="text" name="cidade" id="cidade_input" value="<?php echo htmlspecialchars($user['cidade'] ?? 'Cachoeirinha'); ?>" required>
                 </div>
             </div>
             
             <div class="form-group">
                 <label>Endereço</label>
-                <input type="text" name="endereco" value="<?php echo htmlspecialchars($user['endereco'] ?? ''); ?>" required>
+                <input type="text" name="endereco" id="endereco_input" value="<?php echo htmlspecialchars($user['endereco'] ?? ''); ?>" required>
             </div>
             
             <div class="row">
                 <div class="form-group col">
                     <label>Bairro</label>
-                    <input type="text" name="bairro" value="<?php echo htmlspecialchars($user['bairro'] ?? ''); ?>" required>
+                    <input type="text" name="bairro" id="bairro_input" value="<?php echo htmlspecialchars($user['bairro'] ?? ''); ?>" required>
                 </div>
                 <div class="form-group col">
                     <label>Número</label>
-                    <input type="text" name="numero" value="<?php echo htmlspecialchars($user['numero'] ?? ''); ?>" required>
+                    <input type="text" name="numero" id="numero_input" value="<?php echo htmlspecialchars($user['numero'] ?? ''); ?>" required>
                 </div>
                 <div class="form-group col">
                     <label>Complemento</label>
@@ -257,5 +310,29 @@ if ($subtotal == 0 && !$mensagem_sucesso) {
         <?php endif; ?>
     </main>
     
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var cepInput = document.getElementById('cep_input');
+        if (cepInput) {
+            cepInput.addEventListener('blur', function() {
+                var cep = this.value.replace(/\D/g, '');
+                if (cep.length === 8) {
+                    fetch('https://viacep.com.br/ws/' + cep + '/json/')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('endereco_input').value = data.logradouro || '';
+                            document.getElementById('bairro_input').value = data.bairro || '';
+                            document.getElementById('cidade_input').value = data.localidade || '';
+                            document.getElementById('estado_input').value = data.uf || '';
+                            document.getElementById('numero_input').focus();
+                        }
+                    })
+                    .catch(err => console.error('Erro ao buscar CEP:', err));
+                }
+            });
+        }
+    });
+    </script>
 </body>
 </html>

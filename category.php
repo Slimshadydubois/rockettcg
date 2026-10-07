@@ -50,7 +50,6 @@ $cartas = $stmt->fetchAll();
         </nav>
         
         <div class="nav-actions">
-            <a href="eventos.php" class="icon-btn" title="Eventos"><ion-icon name="calendar-outline"></ion-icon></a>
             <a href="search.php" class="icon-btn"><ion-icon name="search-outline"></ion-icon></a>
             <a href="wishlist.php" class="icon-btn"><ion-icon name="heart-outline"></ion-icon></a>
             <a href="cart.php" class="icon-btn" style="position:relative;">
@@ -61,6 +60,7 @@ $cartas = $stmt->fetchAll();
                 <?php if($_SESSION['usuario_tipo'] === 'admin'): ?>
                     <a href="admin_dashboard.php" class="login-link" style="color:#ff5252; border-color:#ff5252;"><ion-icon name="settings-outline"></ion-icon> Admin</a>
                 <?php endif; ?>
+                <a href="minhas_compras.php" class="login-link" style="color: #4caf50; border-color: #4caf50;"><ion-icon name="cube-outline"></ion-icon> Pedidos</a>
                 <a href="logout.php" class="login-link"><ion-icon name="log-out-outline"></ion-icon> Sair (<?php echo htmlspecialchars(explode(' ', trim($_SESSION['usuario_nome']))[0]); ?>)</a>
             <?php else: ?>
                 <a href="login.php" class="login-link"><ion-icon name="person-circle-outline"></ion-icon> Login</a>
@@ -122,8 +122,7 @@ $cartas = $stmt->fetchAll();
                 <h4>Estado da Carta</h4>
                 <label class="filter-option"><input type="checkbox" class="filter-cb" data-filter="condition" value="Mint"> Mint (M)</label>
                 <label class="filter-option"><input type="checkbox" class="filter-cb" data-filter="condition" value="Near Mint"> Near Mint (NM)</label>
-                <label class="filter-option"><input type="checkbox" class="filter-cb" data-filter="condition" value="Played"> Played (P)</label>
-                <label class="filter-option"><input type="checkbox" class="filter-cb" data-filter="condition" value="Damaged"> Damaged (D)</label>
+
             </div>
 
             <div class="filter-group">

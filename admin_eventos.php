@@ -78,6 +78,7 @@ $eventos = $stmt->fetchAll();
         <nav class="nav-links">
             <a href="admin_dashboard.php">Cartas</a>
             <a href="admin_eventos.php" style="color: var(--accent-color);">Eventos</a>
+            <a href="admin_pedidos.php">Pedidos</a>
         </nav>
         <div class="nav-actions">
             <span style="font-weight:600; margin-right:15px; color:var(--accent-color);">Olá, <?php echo htmlspecialchars($_SESSION['usuario_nome']); ?></span>

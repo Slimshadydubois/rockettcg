@@ -102,8 +102,7 @@ $cartas = $stmt->fetchAll();
                 <h4>Estado da Carta</h4>
                 <label class="filter-option"><input type="checkbox" class="filter-cb" data-filter="condition" value="Mint"> Mint (M)</label>
                 <label class="filter-option"><input type="checkbox" class="filter-cb" data-filter="condition" value="Near Mint"> Near Mint (NM)</label>
-                <label class="filter-option"><input type="checkbox" class="filter-cb" data-filter="condition" value="Played"> Played (P)</label>
-                <label class="filter-option"><input type="checkbox" class="filter-cb" data-filter="condition" value="Damaged"> Damaged (D)</label>
+
             </div>
 
             <div class="filter-group">

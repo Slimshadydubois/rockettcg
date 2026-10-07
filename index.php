@@ -52,7 +52,6 @@ if (isset($_SESSION['usuario_id'])) {
             </div>
             
             <div class="nav-actions">
-                <a href="eventos.php" class="icon-btn" title="Eventos"><ion-icon name="calendar-outline"></ion-icon></a>
                 <a href="wishlist.php" class="icon-btn" title="Favoritos"><ion-icon name="heart-outline"></ion-icon></a>
                 <a href="cart.php" class="icon-btn" style="position:relative;">
                     <ion-icon name="cart-outline"></ion-icon>
@@ -62,6 +61,7 @@ if (isset($_SESSION['usuario_id'])) {
                     <?php if($_SESSION['usuario_tipo'] === 'admin'): ?>
                         <a href="admin_dashboard.php" class="login-link" style="color:#ff5252; border-color:#ff5252;"><ion-icon name="settings-outline"></ion-icon> Admin</a>
                     <?php endif; ?>
+                    <a href="minhas_compras.php" class="login-link" style="color: #4caf50; border-color: #4caf50;"><ion-icon name="cube-outline"></ion-icon> Pedidos</a>
                     <a href="logout.php" class="login-link"><ion-icon name="log-out-outline"></ion-icon> Sair (<?php echo htmlspecialchars(explode(' ', trim($_SESSION['usuario_nome']))[0]); ?>)</a>
                 <?php else: ?>
                     <a href="login.php" class="login-link"><ion-icon name="person-circle-outline"></ion-icon> Login</a>

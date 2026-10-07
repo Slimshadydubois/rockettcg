@@ -51,6 +51,7 @@ $subtotal = 0;
                 <?php if($_SESSION['usuario_tipo'] === 'admin'): ?>
                     <a href="admin_dashboard.php" class="login-link" style="color:#ff5252; border-color:#ff5252;"><ion-icon name="settings-outline"></ion-icon> Admin</a>
                 <?php endif; ?>
+                <a href="minhas_compras.php" class="login-link" style="color: #4caf50; border-color: #4caf50;"><ion-icon name="cube-outline"></ion-icon> Pedidos</a>
                 <a href="logout.php" class="login-link"><ion-icon name="log-out-outline"></ion-icon> Sair (<?php echo htmlspecialchars(explode(' ', trim($_SESSION['usuario_nome']))[0]); ?>)</a>
             <?php else: ?>
                 <a href="login.php" class="login-link"><ion-icon name="person-circle-outline"></ion-icon> Login</a>
@@ -133,8 +134,9 @@ $subtotal = 0;
                 <form action="checkout.php" method="POST" id="checkout-form">
                     <div style="margin-bottom: 20px;">
                         <h4 style="margin-bottom:10px; color:var(--accent-color);">Opções de Entrega</h4>
-                        <label style="display:block; margin: 10px 0; cursor:pointer;"><input type="radio" name="tipo_entrega" value="entrega" id="tipo_entrega_envio" checked onchange="calcFrete()"> Entrega</label>
+                        <label style="display:block; margin: 10px 0; cursor:pointer;"><input type="radio" name="tipo_entrega" value="entrega" id="tipo_entrega_envio" checked onchange="calcFrete()"> Entrega (Correios/Transportadora)</label>
                         <label style="display:block; margin: 10px 0; cursor:pointer;"><input type="radio" name="tipo_entrega" value="balcao" id="tipo_entrega_balcao" onchange="calcFrete()"> Retirar no Balcão (Frete Grátis)</label>
+                        <label style="display:block; margin: 10px 0; cursor:pointer;"><input type="radio" name="tipo_entrega" value="gravatai" id="tipo_entrega_gravatai" onchange="calcFrete()"> Gravataí - Envio por Uber/99 (Combinar o frete via WhatsApp)</label>
                     </div>
 
                     <div id="frete_cep_box" style="margin-bottom: 20px;">
@@ -228,18 +230,19 @@ $subtotal = 0;
         function calcFrete() {
             var subtotal = parseFloat(document.getElementById('raw_subtotal').value);
             var isBalcao = document.getElementById('tipo_entrega_balcao').checked;
+            var isGravatai = document.getElementById('tipo_entrega_gravatai') && document.getElementById('tipo_entrega_gravatai').checked;
             var freteBox = document.getElementById('frete_cep_box');
             var freteText = document.getElementById('val_frete');
             var totalText = document.getElementById('val_total');
             var inputFrete = document.getElementById('raw_frete');
             var container = document.getElementById('frete_options_container');
             
-            if(isBalcao) {
+            if(isBalcao || isGravatai) {
                 freteBox.style.display = 'none';
                 if(container) container.innerHTML = '';
                 
                 var frete = 0;
-                freteText.innerHTML = 'Grátis (Balcão)';
+                freteText.innerHTML = isBalcao ? 'Grátis (Balcão)' : 'A Combinar';
                 inputFrete.value = frete;
                 var total = subtotal + frete;
                 totalText.innerHTML = total.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
