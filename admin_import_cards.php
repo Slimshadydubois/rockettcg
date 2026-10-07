@@ -20,22 +20,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['planilha'])) {
             $msg = "Formato de arquivo inválido. Por favor, envie um arquivo CSV.";
             $msgType = "error";
         } else {
+            // Detectar delimitador e remover BOM
+            $conteudo = file_get_contents($arquivo);
+            $conteudo = preg_replace('/^[\xef\xbb\xbf]+/', '', $conteudo);
+            $primeira_linha = strtok($conteudo, "\n");
+            $delimitador = ',';
+            if (substr_count($primeira_linha, ';') > substr_count($primeira_linha, ',')) {
+                $delimitador = ';';
+            } elseif (substr_count($primeira_linha, "\t") > substr_count($primeira_linha, ',')) {
+                $delimitador = "\t";
+            }
+            
+            // Grava o arquivo limpo (sem BOM) para o fgetcsv ler corretamente
+            file_put_contents($arquivo, $conteudo);
+            
             if (($handle = fopen($arquivo, "r")) !== FALSE) {
-                // Pular o cabeçalho se houver (opcional, verificando se a primeira linha tem 'Pokemon' ou 'Nome')
-                $cabecalho = fgetcsv($handle, 1000, ";"); // tenta com ponto e vírgula
-                if (count($cabecalho) <= 1) {
-                    rewind($handle);
-                    $cabecalho = fgetcsv($handle, 1000, ","); // tenta com vírgula
-                }
+                $cabecalho = fgetcsv($handle, 1000, $delimitador);
                 
                 $linhas_importadas = 0;
                 $linhas_com_erro = 0;
                 
                 // Se a primeira linha não parecer cabeçalho (não contém as palavras chaves), voltamos o ponteiro
-                $primeira_col = strtolower($cabecalho[0]);
-                if (strpos($primeira_col, 'pokemon') === false && strpos($primeira_col, 'nome') === false && strpos($primeira_col, 'item') === false) {
-                    // Não é cabeçalho, volta para ler tudo
-                    rewind($handle);
+                if ($cabecalho && is_array($cabecalho)) {
+                    $primeira_col = strtolower(implode(' ', $cabecalho));
+                    if (strpos($primeira_col, 'pokemon') === false && strpos($primeira_col, 'nome') === false && strpos($primeira_col, 'item') === false) {
+                        rewind($handle);
+                    }
                 }
 
                 $tipo_planilha = $_POST['tipo_planilha'] ?? 'pokemon';
@@ -48,17 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['planilha'])) {
                     $stmtUpdateReverse = $pdo->prepare("UPDATE cartas SET preco_reverse = ?, estoque_reverse = ?, nome_variante = ? WHERE id = ?");
                     $stmtInsert = $pdo->prepare("INSERT INTO cartas (nome, preco, categoria, imagem, descricao, edicao, estado, raridade, data_lancamento, tipo_carta, tipo_energia, nacionalidade, estoque, promocao_porcentagem, preco_reverse, estoque_reverse, nome_variante) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-                    while (($dados = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                        // Se o CSV foi salvo com ; em vez de , vamos tentar ajustar
-                        if (count($dados) <= 1 && strpos($dados[0], ';') !== false) {
-                            $dados = explode(';', $dados[0]);
+                    while (($dados = fgetcsv($handle, 1000, $delimitador)) !== FALSE) {
+                        // Ignorar linhas vazias
+                        if (empty($dados) || (count($dados) == 1 && trim($dados[0]) === '')) {
+                            continue;
                         }
 
                         if ($tipo_planilha === 'energia') {
-                            if (count($dados) < 3) {
-                                $linhas_com_erro++;
-                                continue;
-                            }
+                            if (count($dados) < 3) { $linhas_com_erro++; continue; }
                             $nome = trim($dados[0]);
                             $codigo_edicao = trim($dados[1] ?? ''); // Vem da coluna "Tipo" na planilha
                             $valor = trim($dados[2] ?? '0');
@@ -72,10 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['planilha'])) {
                             $tipo = 'Normal'; // Será processado como tipo_energia
                             $descricao_csv = 'Energia';
                         } else {
-                            if (count($dados) < 4) {
-                                $linhas_com_erro++;
-                                continue;
-                            }
+                            if (count($dados) < 4) { $linhas_com_erro++; continue; }
                             $nome = trim($dados[0]);
                             $numero = trim($dados[1] ?? '');
                             $valor = trim($dados[2] ?? '0');
@@ -88,8 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['planilha'])) {
                             $descricao_csv = "Número da Carta: " . $numero;
                         }
 
-                        // Validação: ignorar a linha de cabeçalho
-                        if (strtolower($imagem) === 'imagem' || strtolower($nome) === 'pokemon' || strtolower($nome) === 'item') {
+                        // Validação estrita: Se o nome estiver vazio, pula a linha
+                        if (empty($nome) || strtolower($imagem) === 'imagem' || strtolower($nome) === 'pokemon' || strtolower($nome) === 'item') {
+                            $linhas_com_erro++;
                             continue;
                         }
 
