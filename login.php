@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: index.php");
             exit;
         } catch(PDOException $e) {
-            $erro = "Erro ao registrar: Email já pode estar em uso.";
+            $erro = "Erro ao registrar: " . $e->getMessage();
         }
     } elseif (isset($_POST['action']) && $_POST['action'] === 'login') {
         $email = strtolower($_POST['email']);
