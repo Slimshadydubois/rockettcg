@@ -137,6 +137,7 @@
     text-decoration: none;
     color: inherit;
     display: block;
+    min-width: 0;
 }
 
 /* Tags de Informação na Carta */

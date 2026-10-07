@@ -133,7 +133,7 @@ $cartas = $stmt->fetchAll();
         </aside>
 
         <!-- Content Area Wrapper -->
-        <div class="content-wrapper" style="flex: 1;">
+        <div class="content-wrapper" style="flex: 1; min-width: 0;">
             
             <div class="category-header" style="text-align: left; padding: 0 0 30px 0; background: none;">
                 <h1>Explorar <span style="text-transform:capitalize;"><?php echo htmlspecialchars($categoriaAtiva); ?></span></h1>
