@@ -2,10 +2,22 @@
 require_once 'config.php';
 
 try {
-    // Adicionar colunas para suporte a cartas Reverse (Foil) e similares
-    $pdo->exec("ALTER TABLE cartas ADD COLUMN IF NOT EXISTS preco_reverse DECIMAL(10,2) NULL;");
-    $pdo->exec("ALTER TABLE cartas ADD COLUMN IF NOT EXISTS estoque_reverse INT DEFAULT 0;");
-    $pdo->exec("ALTER TABLE cartas ADD COLUMN IF NOT EXISTS nome_variante VARCHAR(50) NULL;");
+    $queries = [
+        "ALTER TABLE cartas ADD COLUMN preco_reverse DECIMAL(10,2) NULL;",
+        "ALTER TABLE cartas ADD COLUMN estoque_reverse INT DEFAULT 0;",
+        "ALTER TABLE cartas ADD COLUMN nome_variante VARCHAR(50) NULL;"
+    ];
+
+    foreach ($queries as $sql) {
+        try {
+            $pdo->exec($sql);
+        } catch (PDOException $e) {
+            // Se o erro for 1060 (Coluna já existe), a gente ignora.
+            if (strpos($e->getMessage(), '1060') === false && strpos($e->getMessage(), 'Duplicate column') === false) {
+                throw $e;
+            }
+        }
+    }
 
     echo "<h1>Sucesso!</h1>";
     echo "<p>As colunas 'preco_reverse', 'estoque_reverse' e 'nome_variante' foram adicionadas com sucesso à tabela de cartas.</p>";
